@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  Res,
 } from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { Response } from 'express';
 
 @Controller('book')
 export class BookController {
@@ -21,8 +23,8 @@ export class BookController {
   }
 
   @Get()
-  findAll() {
-    return this.bookService.findAll();
+  async findAll(@Res() res: Response) {
+    return res.render('index', { books: await this.bookService.findAll() });
   }
 
   @Get(':id')
