@@ -1,31 +1,21 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './user/user.module';
-import { User } from './user/entities/user.entity';
+import { MongooseModule } from '@nestjs/mongoose';
+import { BookModule } from './book/book.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRootAsync({
-      imports: [
-        ConfigModule.forRoot({
-          isGlobal: true,
-        }),
-      ],
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get('DB_USERNAME'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_DATABASE'),
-        synchronize: configService.get<boolean>('DB_SYNC'),
-        entities: [User],
-        logging: true,
+        uri: configService.get('DB_URI'),
       }),
       inject: [ConfigService],
     }),
-    UserModule,
+    BookModule,
   ],
   controllers: [],
   providers: [],
